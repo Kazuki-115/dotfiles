@@ -254,6 +254,26 @@ config.keys = {
     end),
   },
   {
+    key = 'h',
+    mods = 'CTRL|SHIFT',
+    action = act.ActivatePaneDirection 'Left',
+  },
+  {
+    key = 'j',
+    mods = 'CTRL|SHIFT',
+    action = act.ActivatePaneDirection 'Down',
+  },
+  {
+    key = 'k',
+    mods = 'CTRL|SHIFT',
+    action = act.ActivatePaneDirection 'Up',
+  },
+  {
+    key = 'l',
+    mods = 'CTRL|SHIFT',
+    action = act.ActivatePaneDirection 'Right',
+  },
+  {
     key = 'H',
     mods = 'CMD|SHIFT',
     action = act.RotatePanes 'Clockwise',
