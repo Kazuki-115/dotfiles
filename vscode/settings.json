@@ -12,17 +12,14 @@
     "editor.semanticTokenColorCustomizations": {},
     "editor.language.colorizedBracketPairs": [],
     "editor.tokenColorCustomizations": {
-        "textMateRules": [
-            {
+        "textMateRules": [ {
                 "scope": [
                     "markup.heading",
                     "markup.heading.markdown",
                     "entity.name.section.markdown",
                     "punctuation.definition.heading.markdown"
                 ],
-                "settings": {
-                    "fontStyle": "bold"
-                }
+                "settings": { "fontStyle": "bold" }
             }
         ]
     },
@@ -66,48 +63,20 @@
     "github.copilot.advanced": {},
 
     // Accessibility
-    "accessibility.signals.terminalBell": {
-        "sound": "off"
-    },
-    "accessibility.signals.terminalCommandFailed": {
-        "sound": "off"
-    },
-    "accessibility.signals.terminalCommandSucceeded": {
-        "sound": "off"
-    },
-    "accessibility.signals.terminalQuickFix": {
-        "sound": "off"
-    },
-    "accessibility.signals.codeActionApplied": {
-        "sound": "off"
-    },
-    "accessibility.signals.codeActionTriggered": {
-        "sound": "off"
-    },
-    "accessibility.signals.editsKept": {
-        "sound": "off"
-    },
-    "accessibility.signals.editsUndone": {
-        "sound": "off"
-    },
-    "accessibility.signals.lineHasError": {
-        "sound": "off"
-    },
-    "accessibility.signals.lineHasFoldedArea": {
-        "sound": "off"
-    },
-    "accessibility.signals.lineHasInlineSuggestion": {
-        "sound": "off"
-    },
-    "accessibility.signals.lineHasWarning": {
-        "sound": "off"
-    },
-    "accessibility.signals.nextEditSuggestion": {
-        "sound": "off"
-    },
-    "accessibility.signals.positionHasWarning": {
-        "sound": "off"
-    },
+    "accessibility.signals.terminalBell": { "sound": "off" },
+    "accessibility.signals.terminalCommandFailed": { "sound": "off" },
+    "accessibility.signals.terminalCommandSucceeded": { "sound": "off" },
+    "accessibility.signals.terminalQuickFix": { "sound": "off" },
+    "accessibility.signals.codeActionApplied": { "sound": "off" },
+    "accessibility.signals.codeActionTriggered": { "sound": "off" },
+    "accessibility.signals.editsKept": { "sound": "off" },
+    "accessibility.signals.editsUndone": { "sound": "off" },
+    "accessibility.signals.lineHasError": { "sound": "off" },
+    "accessibility.signals.lineHasFoldedArea": { "sound": "off" },
+    "accessibility.signals.lineHasInlineSuggestion": { "sound": "off" },
+    "accessibility.signals.lineHasWarning": { "sound": "off" },
+    "accessibility.signals.nextEditSuggestion": { "sound": "off" },
+    "accessibility.signals.positionHasWarning": { "sound": "off" },
 
     // UI / Theme
     "chat.disableAIFeatures": true,
