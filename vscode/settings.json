@@ -18,48 +18,13 @@
     "vim.useSystemClipboard": true,
     "vim.useCtrlKeys": true,
     "vim.hlsearch": true,
-      "macros.list": {
-      "explorerDown": [
-          "list.focusDown",
-          {
-              "command": "$delay",
-              "args": { "delay": 80 }
-          },
-          "workbench.files.action.focusFilesExplorer"
-      ],
-      "explorerUp": [
-          "list.focusUp",
-          {
-              "command": "$delay",
-              "args": { "delay": 80 }
-          },
-          "workbench.files.action.focusFilesExplorer"
-      ]
-  },
-      "vim.insertModeKeyBindings": [
-        { "before": ["j", "j"], "after": ["<Esc>"] }
+    "vim.insertModeKeyBindings": [
+        { "before": [ "j", "j" ], "after": [ "<Esc>" ] }
     ],
-
-    "vim.insertModeKeyBindingsNonRecursive": [
-        { "before": ["<C-[>"], "after": ["<Esc>"] },
-        { "before": ["<C-h>"], "after": ["<Left>"] },
-        { "before": ["<C-j>"], "after": ["<Down>"] },
-        { "before": ["<C-k>"], "after": ["<Up>"] },
-        { "before": ["<C-l>"], "after": ["<Right>"] }
-    ],
-
     "vim.normalModeKeyBindingsNonRecursive": [
         { "before": ["o"], "after": ["o", "<Esc>"] },
         { "before": ["O"], "after": ["O", "<Esc>"] },
-        { "before": ["x"], "after": ["X"] },
-        { "before": ["X"], "after": ["x"] }
     ],
-
-    "vim.visualModeKeyBindingsNonRecursive": [
-        { "before": ["x"], "after": ["X"] },
-        { "before": ["X"], "after": ["x"] }
-    ],
-
     "editor.pasteAs.preferences": [],
     "git.ignoreLegacyWarning": true,
     "C_Cpp.errorSquiggles": "enabled",
