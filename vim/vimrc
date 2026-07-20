@@ -14,6 +14,7 @@ set cursorline
 
 " Use Ctrl-[ as an alternative Escape in Insert mode.
 inoremap <C-[> <Esc>
+inoremap jj <Esc>
 
 " Keep o/O from staying in Insert mode after opening a new line.
 nnoremap o o<Esc>
