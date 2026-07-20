@@ -179,7 +179,7 @@ config.initial_rows = 28
 
 config.status_update_interval = 300
 
-config.window_background_opacity = 0.95
+config.window_background_opacity = 0.85
 config.macos_window_background_blur = 0
 
 config.font_size = 14

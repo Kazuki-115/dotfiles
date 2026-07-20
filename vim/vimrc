@@ -31,3 +31,7 @@ nnoremap x X
 nnoremap X x
 xnoremap x X
 xnoremap X x
+
+" netrwというファイラを使う設定
+filetype plugin on
+
