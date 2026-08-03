@@ -35,7 +35,10 @@
     "vim.useCtrlKeys": true,
     "vim.hlsearch": true,
     "vim.insertModeKeyBindings": [
-        { "before": ["j", "j"], "after": ["<Esc>"] }
+        { "before": ["f", "f"], "after": ["<Esc>"] }
+    ],
+    "vim.visualModeKeyBindings": [
+        { "before": ["f", "f"], "after": ["<Esc>"] }
     ],
     "vim.insertModeKeyBindingsNonRecursive": [
         { "before": ["<C-[>"], "after": ["<Esc>"] },
