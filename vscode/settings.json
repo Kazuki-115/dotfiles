@@ -64,6 +64,16 @@
     "markdown-pdf.displayHeaderFooter": false,
     "markdown-preview-enhanced.previewTheme": "atom-dark.css",
     "github.copilot.advanced": {},
+    "multiCommand.commands": [
+        {
+            "command": "multiCommand.copySelectionToTerminalPasteOnly",
+            "sequence": [
+                "editor.action.clipboardCopyAction",
+                "workbench.action.terminal.focus",
+                "workbench.action.terminal.paste"
+            ]
+        }
+    ],
 
     // Accessibility
     "accessibility.signals.terminalBell": { "sound": "off" },
