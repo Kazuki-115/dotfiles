@@ -4,6 +4,10 @@
     "editor.minimap.enabled": true,
     "editor.lineNumbers": "on",
     "editor.renderLineHighlight": "line",
+    "[markdown]": {
+        "editor.wordWrap": "on",
+        "editor.wrappingStrategy": "advanced"
+    },
     "editor.autoClosingBrackets": "never",
     "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
     "editor.autoClosingQuotes": "never",
@@ -48,6 +52,8 @@
         { "before": ["<C-l>"], "after": ["<Right>"] }
     ],
     "vim.normalModeKeyBindingsNonRecursive": [
+        { "before": ["j"], "after": ["g", "j"] },
+        { "before": ["k"], "after": ["g", "k"] },
         { "before": ["o"], "after": ["o", "<Esc>"] },
         { "before": ["O"], "after": ["O", "<Esc>"] }
     ],
@@ -93,5 +99,5 @@
 
     // UI / Theme
     "chat.disableAIFeatures": true,
-    "workbench.colorTheme": "Visual Studio 2017 Dark - C++"
+    "editor.cursorBlinking": "solid"
 }

@@ -14,8 +14,12 @@
         "command": "workbench.action.nextEditor"
     },
     {
+        "key": "ctrl+[Equal]",
+        "command": "workbench.action.navigateLast"
+    },
+    {
       "key": "cmd+l",
       "command": "multiCommand.copySelectionToTerminalPasteOnly",
       "when": "editorTextFocus && editorHasSelection"
-    }
+    },
 ]
