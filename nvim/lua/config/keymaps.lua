@@ -1,3 +1,8 @@
 vim.keymap.set("i", "ff", "<Esc>", { desc = "Exit insert mode" })
 vim.keymap.set({ "v", "x", "s" }, "ff", "<Esc>", { desc = "Exit visual/select mode" })
-
+vim.keymap.set("n", "o", "o<Esc>", { desc = "Open line below without insert" })
+vim.keymap.set("n", "O", "O<Esc>", { desc = "Open line above without insert" })
+vim.keymap.set("n", "j", "gj", { desc = "Move down by display line" })
+vim.keymap.set("n", "k", "gk", { desc = "Move up by display line" })
+vim.keymap.set("n", "<Down>", "gj", { desc = "Move down by display line" })
+vim.keymap.set("n", "<Up>", "gk", { desc = "Move up by display line" })
