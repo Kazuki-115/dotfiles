@@ -24,14 +24,29 @@ return {
         { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
     },
     config = function()
+      local telescope = require('telescope')
       local builtin = require('telescope.builtin')
+
+      telescope.setup({
+        defaults = {
+          layout_strategy = 'horizontal',
+          sorting_strategy = 'ascending',
+          layout_config = {
+            width = 0.99,
+            height = 0.99,
+            preview_width = 0.55,
+            preview_cutoff = 80,
+            prompt_position = 'top',
+          },
+        },
+      })
 
       vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Find files' })
       vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Live grep' })
       vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'List buffers' })
       vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Help tags' })
 
-      end,
+    end,
   },
 
   { "sunbluesome/callisto.nvim", opts = {} },
