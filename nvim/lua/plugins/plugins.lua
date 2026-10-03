@@ -29,6 +29,13 @@ return {
 
       telescope.setup({
         defaults = {
+          initial_mode = 'normal',
+          mappings = {
+            n = {
+              ['j'] = 'move_selection_next',
+              ['k'] = 'move_selection_previous',
+            },
+          },
           layout_strategy = 'horizontal',
           sorting_strategy = 'ascending',
           layout_config = {
