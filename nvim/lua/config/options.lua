@@ -49,11 +49,100 @@ local function insert_frontmatter(buf)
   })
 end
 
+local function close_frontmatter_popup(win)
+  if win and vim.api.nvim_win_is_valid(win) then
+    vim.api.nvim_win_close(win, true)
+  end
+end
+
+local function open_frontmatter_popup()
+  local source_buf = vim.api.nvim_get_current_buf()
+  local start_line, closing_line = frontmatter_range(source_buf)
+
+  if not closing_line then
+    insert_frontmatter(source_buf)
+    start_line, closing_line = frontmatter_range(source_buf)
+    conceal_frontmatter(source_buf)
+  end
+
+  local source_lines = vim.api.nvim_buf_get_lines(source_buf, start_line - 1, closing_line, false)
+  local popup_buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_name(popup_buf, "frontmatter://" .. source_buf)
+  vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, source_lines)
+  vim.bo[popup_buf].buftype = "acwrite"
+  vim.bo[popup_buf].bufhidden = "wipe"
+  vim.bo[popup_buf].filetype = "yaml"
+  vim.bo[popup_buf].swapfile = false
+  vim.bo[popup_buf].modified = false
+
+  local width = 0
+  for _, line in ipairs(source_lines) do
+    width = math.max(width, vim.fn.strdisplaywidth(line))
+  end
+  width = math.min(math.max(width + 4, 32), math.floor(vim.o.columns * 0.8))
+  local height = math.min(math.max(#source_lines, 3), math.floor(vim.o.lines * 0.6))
+  local win = vim.api.nvim_open_win(popup_buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = math.floor((vim.o.lines - height) / 2),
+    col = math.floor((vim.o.columns - width) / 2),
+    style = "minimal",
+    border = "rounded",
+    title = " Frontmatter ",
+    title_pos = "center",
+  })
+
+  vim.wo[win].cursorline = true
+  vim.wo[win].wrap = false
+
+  for i, line in ipairs(source_lines) do
+    if line:match("^background:%s*") then
+      local target_line = i
+      if line:match("[>|][+-]?%s*$") and source_lines[i + 1] then
+        target_line = i + 1
+      end
+      vim.api.nvim_win_set_cursor(win, { target_line, #source_lines[target_line] })
+      break
+    end
+  end
+
+  vim.api.nvim_create_autocmd("BufWriteCmd", {
+    buffer = popup_buf,
+    callback = function()
+      local edited_lines = vim.api.nvim_buf_get_lines(popup_buf, 0, -1, false)
+
+      if edited_lines[1] ~= "---" or edited_lines[#edited_lines] ~= "---" and edited_lines[#edited_lines] ~= "..." then
+        vim.notify("Frontmatter requires opening and closing delimiters", vim.log.levels.ERROR)
+        return
+      end
+
+      vim.api.nvim_buf_set_lines(source_buf, start_line - 1, closing_line, false, edited_lines)
+      vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, edited_lines)
+      vim.bo[popup_buf].modified = false
+      conceal_frontmatter(source_buf)
+      vim.notify("Frontmatter saved", vim.log.levels.INFO)
+    end,
+  })
+
+  vim.keymap.set("n", "q", function()
+    close_frontmatter_popup(win)
+  end, { buffer = popup_buf, silent = true })
+  vim.keymap.set("n", "<Esc>", function()
+    close_frontmatter_popup(win)
+  end, { buffer = popup_buf, silent = true })
+end
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function(args)
     vim.opt_local.conceallevel = 2
     vim.opt_local.concealcursor = "nc"
+    vim.keymap.set("n", "<leader>m", open_frontmatter_popup, {
+      buffer = args.buf,
+      silent = true,
+      desc = "Edit frontmatter in floating window",
+    })
     conceal_frontmatter(args.buf)
   end,
 })
