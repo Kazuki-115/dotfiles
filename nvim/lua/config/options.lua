@@ -161,3 +161,23 @@ vim.api.nvim_create_autocmd("BufNewFile", {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    local buf = vim.api.nvim_get_current_buf()
+    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+
+    if vim.fn.argc() == 0
+      and vim.api.nvim_buf_get_name(buf) == ""
+      and #lines == 1
+      and lines[1] == ""
+    then
+      vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+        "# ",
+        "",
+      })
+      insert_frontmatter(buf)
+      vim.bo[buf].filetype = "markdown"
+    end
+  end,
+})
