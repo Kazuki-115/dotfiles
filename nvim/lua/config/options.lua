@@ -39,8 +39,12 @@ local function conceal_frontmatter(buf)
 end
 
 local function insert_frontmatter(buf)
-  vim.api.nvim_buf_set_lines(buf, 0, 0, false, {
+  local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+  local end_line = #lines == 1 and lines[1] == "" and 1 or 0
+
+  vim.api.nvim_buf_set_lines(buf, 0, end_line, false, {
     "---",
+    'title: ""',
     'created: "' .. os.date("%Y-%m-%d") .. '"',
     "background: >-",
     "  ",
@@ -153,10 +157,6 @@ vim.api.nvim_create_autocmd("BufNewFile", {
     local lines = vim.api.nvim_buf_get_lines(args.buf, 0, -1, false)
 
     if #lines == 1 and lines[1] == "" then
-      vim.api.nvim_buf_set_lines(args.buf, 0, -1, false, {
-        "# ",
-        "",
-      })
       insert_frontmatter(args.buf)
     end
   end,
@@ -172,10 +172,10 @@ vim.api.nvim_create_autocmd("VimEnter", {
       and #lines == 1
       and lines[1] == ""
     then
-      vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
-        "# ",
-        "",
-      })
+      local filename = os.date("%Y%m%d-%H%M%S.md")
+      local path = vim.fs.joinpath(vim.fn.getcwd(), filename)
+
+      vim.api.nvim_buf_set_name(buf, path)
       insert_frontmatter(buf)
       vim.bo[buf].filetype = "markdown"
     end
