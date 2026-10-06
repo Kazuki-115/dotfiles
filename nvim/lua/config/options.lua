@@ -29,13 +29,21 @@ local function conceal_frontmatter(buf)
   vim.api.nvim_buf_clear_namespace(buf, frontmatter_namespace, 0, -1)
 
   local _, closing_line = frontmatter_range(buf)
+  vim.b[buf].frontmatter_line_count = closing_line or 0
+
   if closing_line then
     vim.api.nvim_buf_set_extmark(buf, frontmatter_namespace, 0, 0, {
       end_row = closing_line - 1,
-      end_col = 0,
+      end_col = -1,
       conceal_lines = "",
+      strict = false,
     })
   end
+end
+
+function _G.frontmatter_statuscolumn()
+  local line = vim.v.lnum - (vim.b.frontmatter_line_count or 0)
+  return line > 0 and tostring(line) or ""
 end
 
 local function insert_frontmatter(buf)
@@ -141,13 +149,36 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function(args)
     vim.opt_local.conceallevel = 2
-    vim.opt_local.concealcursor = "nc"
+    vim.opt_local.concealcursor = "nivc"
+    vim.opt_local.statuscolumn = "%s%=%{v:lua.frontmatter_statuscolumn()} "
     vim.keymap.set("n", "<leader>m", open_frontmatter_popup, {
       buffer = args.buf,
       silent = true,
       desc = "Edit frontmatter in floating window",
     })
+    vim.keymap.set("n", "gg", function()
+      local offset = vim.b[args.buf].frontmatter_line_count or 0
+      local displayed_line = vim.v.count > 0 and vim.v.count or 1
+      local target_line = math.min(offset + displayed_line, vim.api.nvim_buf_line_count(args.buf))
+      vim.api.nvim_win_set_cursor(0, { target_line, 0 })
+    end, {
+      buffer = args.buf,
+      silent = true,
+      desc = "Go to displayed Markdown line",
+    })
     conceal_frontmatter(args.buf)
+
+    vim.schedule(function()
+      if not vim.api.nvim_buf_is_valid(args.buf) or vim.api.nvim_get_current_buf() ~= args.buf then
+        return
+      end
+
+      local offset = vim.b[args.buf].frontmatter_line_count or 0
+      local cursor = vim.api.nvim_win_get_cursor(0)
+      if offset > 0 and cursor[1] <= offset then
+        vim.api.nvim_win_set_cursor(0, { math.min(offset + 1, vim.api.nvim_buf_line_count(args.buf)), 0 })
+      end
+    end)
   end,
 })
 
