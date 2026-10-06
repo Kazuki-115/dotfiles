@@ -67,6 +67,19 @@ local function close_frontmatter_popup(win)
   end
 end
 
+local function save_and_close_frontmatter_popup(win, buf)
+  if not win or not vim.api.nvim_win_is_valid(win) or not vim.api.nvim_buf_is_valid(buf) then
+    return
+  end
+
+  vim.api.nvim_set_current_win(win)
+  vim.cmd("write")
+
+  if not vim.bo[buf].modified then
+    close_frontmatter_popup(win)
+  end
+end
+
 local function open_frontmatter_popup()
   local source_buf = vim.api.nvim_get_current_buf()
   local start_line, closing_line = frontmatter_range(source_buf)
@@ -119,6 +132,13 @@ local function open_frontmatter_popup()
     end
   end
 
+  vim.schedule(function()
+    if vim.api.nvim_win_is_valid(win) then
+      vim.api.nvim_set_current_win(win)
+      vim.cmd("startinsert!")
+    end
+  end)
+
   vim.api.nvim_create_autocmd("BufWriteCmd", {
     buffer = popup_buf,
     callback = function()
@@ -133,15 +153,22 @@ local function open_frontmatter_popup()
       vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, edited_lines)
       vim.bo[popup_buf].modified = false
       conceal_frontmatter(source_buf)
+
+      if vim.api.nvim_buf_get_name(source_buf) ~= "" then
+        vim.api.nvim_buf_call(source_buf, function()
+          vim.cmd("silent write")
+        end)
+      end
+
       vim.notify("Frontmatter saved", vim.log.levels.INFO)
     end,
   })
 
   vim.keymap.set("n", "q", function()
-    close_frontmatter_popup(win)
+    save_and_close_frontmatter_popup(win, popup_buf)
   end, { buffer = popup_buf, silent = true })
   vim.keymap.set("n", "<Esc>", function()
-    close_frontmatter_popup(win)
+    save_and_close_frontmatter_popup(win, popup_buf)
   end, { buffer = popup_buf, silent = true })
 end
 
