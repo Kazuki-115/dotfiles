@@ -1,0 +1,12 @@
+[mgr]
+ratio = [1, 2, 5]
+
+[opener]
+edit = [
+  { run = '${EDITOR:-nvim} "$@"', block = true, for = "unix" },
+]
+
+[open]
+rules = [
+  { mime = "text/*", use = "edit" },
+]
