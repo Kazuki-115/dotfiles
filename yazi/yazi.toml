@@ -1,6 +1,9 @@
 [mgr]
 ratio = [1, 2, 5]
 
+[preview]
+wrap = "yes"
+
 [opener]
 edit = [
   { run = '${EDITOR:-nvim} "$@"', block = true, for = "unix" },
