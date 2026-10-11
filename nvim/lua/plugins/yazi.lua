@@ -68,6 +68,14 @@ return {
         vim.keymap.set("t", "<C-g>", function()
           open_from_current_directory(require("telescope.builtin").live_grep, "Live grep")
         end, { buffer = yazi_buffer, silent = true })
+
+        vim.keymap.set("t", "<C-z>", function()
+          vim.cmd("confirm qall")
+        end, {
+          buffer = yazi_buffer,
+          silent = true,
+          desc = "Quit Neovim and return to the terminal",
+        })
       end,
       integrations = {
         grep_in_directory = "telescope",
