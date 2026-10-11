@@ -10,6 +10,8 @@ vim.opt.breakindent = true
 vim.opt.fillchars:append({ eob = " " })
 vim.opt.foldopen:remove("undo")
 
+local frontmatter_highlight_namespace = vim.api.nvim_create_namespace("frontmatter-highlight")
+
 local function frontmatter_range(buf)
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 
@@ -20,6 +22,36 @@ local function frontmatter_range(buf)
   for i = 2, #lines do
     if lines[i] == "---" or lines[i] == "..." then
       return 1, i
+    end
+  end
+end
+
+local function highlight_frontmatter(buf)
+  vim.api.nvim_buf_clear_namespace(buf, frontmatter_highlight_namespace, 0, -1)
+
+  local _, closing_line = frontmatter_range(buf)
+  if not closing_line then
+    return
+  end
+
+  vim.api.nvim_buf_set_extmark(buf, frontmatter_highlight_namespace, 0, 0, {
+    end_row = closing_line - 1,
+    end_col = -1,
+    end_right_gravity = true,
+    hl_group = "Normal",
+    priority = 200,
+    strict = false,
+  })
+
+  local lines = vim.api.nvim_buf_get_lines(buf, 0, closing_line, false)
+  for row, line in ipairs(lines) do
+    local key = line:match("^(created):") or line:match("^(background):")
+    if key then
+      vim.api.nvim_buf_set_extmark(buf, frontmatter_highlight_namespace, row - 1, 0, {
+        end_col = #key,
+        hl_group = "PreProc",
+        priority = 210,
+      })
     end
   end
 end
@@ -79,12 +111,20 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function(args)
     fold_frontmatter(args.buf)
+    highlight_frontmatter(args.buf)
     vim.keymap.set("n", "<leader>m", function()
       toggle_frontmatter_fold(args.buf)
     end, {
       buffer = args.buf,
       silent = true,
       desc = "Toggle frontmatter fold",
+    })
+
+    vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+      buffer = args.buf,
+      callback = function()
+        highlight_frontmatter(args.buf)
+      end,
     })
 
     vim.schedule(function()
