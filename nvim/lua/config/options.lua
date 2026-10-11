@@ -71,13 +71,6 @@ local function insert_frontmatter(buf, created_at)
   })
 end
 
-local notes_root = vim.fs.normalize(vim.fn.expand("~/notes"))
-
-local function is_inside_notes(path)
-  path = vim.fs.normalize(path)
-  return path == notes_root or vim.startswith(path, notes_root .. "/")
-end
-
 local function fold_frontmatter(buf)
   local start_line, closing_line = frontmatter_range(buf)
   if not closing_line then
@@ -141,43 +134,13 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-vim.api.nvim_create_autocmd("BufNewFile", {
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufReadPost" }, {
   pattern = "*.md",
   callback = function(args)
     local lines = vim.api.nvim_buf_get_lines(args.buf, 0, -1, false)
 
     if #lines == 1 and lines[1] == "" then
       insert_frontmatter(args.buf)
-    end
-  end,
-})
-
-vim.api.nvim_create_autocmd("VimEnter", {
-  callback = function()
-    local buf = vim.api.nvim_get_current_buf()
-    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-
-    if vim.fn.argc() == 0
-      and vim.api.nvim_buf_get_name(buf) == ""
-      and #lines == 1
-      and lines[1] == ""
-    then
-      local cwd = vim.fs.normalize(vim.fn.getcwd())
-
-      if not is_inside_notes(cwd) then
-        return
-      end
-
-      local created_at = os.date("%Y-%m-%d %H:%M:%S")
-      local filename = created_at:gsub(
-        "^(%d%d%d%d)%-(%d%d)%-(%d%d) (%d%d):(%d%d):(%d%d)$",
-        "%1%2%3-%4%5%6"
-      ) .. ".md"
-      local path = vim.fs.joinpath(cwd, filename)
-
-      vim.api.nvim_buf_set_name(buf, path)
-      insert_frontmatter(buf, created_at)
-      vim.bo[buf].filetype = "markdown"
     end
   end,
 })
