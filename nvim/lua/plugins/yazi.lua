@@ -6,6 +6,60 @@ return {
     dependencies = {
       { "nvim-lua/plenary.nvim", lazy = true },
     },
+    init = function()
+      local notes_root = vim.fs.normalize(vim.fn.expand("~/notes"))
+
+      local function is_in_notes()
+        local cwd = vim.fs.normalize(vim.fn.getcwd())
+        return cwd == notes_root or vim.startswith(cwd, notes_root .. "/")
+      end
+
+      local function return_to_yazi()
+        require("lazy").load({ plugins = { "yazi.nvim" } })
+        vim.schedule(function()
+          vim.cmd("Yazi toggle")
+        end)
+      end
+
+      local function delete_current_buffer(force)
+        local ok, err = pcall(vim.api.nvim_buf_delete, 0, { force = force })
+        if not ok then
+          vim.notify(err, vim.log.levels.ERROR)
+          return false
+        end
+
+        return true
+      end
+
+      vim.api.nvim_create_user_command("NotesQ", function(opts)
+        if delete_current_buffer(opts.bang) then
+          return_to_yazi()
+        end
+      end, {
+        bang = true,
+        desc = "Close the current note and return to Yazi",
+      })
+
+      vim.api.nvim_create_user_command("NotesWq", function()
+        vim.cmd.write()
+        if delete_current_buffer(false) then
+          return_to_yazi()
+        end
+      end, {
+        desc = "Write and close the current note, then return to Yazi",
+      })
+
+      _G.notes_quit_command_abbrev = function(command)
+        if vim.fn.getcmdtype() ~= ":" or vim.fn.getcmdline() ~= command or not is_in_notes() then
+          return command
+        end
+
+        return command == "wq" and "NotesWq" or "NotesQ"
+      end
+
+      vim.cmd([[cnoreabbrev <expr> q v:lua.notes_quit_command_abbrev('q')]])
+      vim.cmd([[cnoreabbrev <expr> wq v:lua.notes_quit_command_abbrev('wq')]])
+    end,
     keys = {
       {
         "<leader>e",
