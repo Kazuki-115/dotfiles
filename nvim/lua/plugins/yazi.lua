@@ -74,6 +74,8 @@ return {
     },
     opts = {
       open_for_directories = false,
+      -- Use the entire Neovim screen for the Yazi floating window.
+      floating_window_scaling_factor = 0.95,
       keymaps = {
         show_help = "<F1>",
         grep_in_directory = false,
