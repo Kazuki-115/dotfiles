@@ -131,9 +131,11 @@ local function setup_wikilink_conceal(buf)
   vim.api.nvim_buf_call(buf, function()
     vim.opt_local.conceallevel = 2
     vim.opt_local.concealcursor = ""
-    vim.cmd([[
+    vim.cmd([=[
       syntax region NotesWikiLink matchgroup=NotesWikiLinkDelimiter start=/\[\[/ end=/\]\]/ concealends keepend
-    ]])
+      syntax match NotesMarkdownImage /!\[[^]]*\]([^)]*)/ conceal
+      syntax match NotesWikiImage /!\[\[[^]]\+\]\]/ conceal
+    ]=])
   end)
 end
 
