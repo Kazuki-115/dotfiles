@@ -57,7 +57,13 @@ local function open_link()
     return
   end
 
-  if not target:match("%.md$") then
+  local is_image = target:lower():match("%.png$")
+    or target:lower():match("%.jpe?g$")
+    or target:lower():match("%.gif$")
+    or target:lower():match("%.webp$")
+    or target:lower():match("%.avif$")
+
+  if not target:match("%.md$") and not is_image then
     target = target .. ".md"
   end
 
@@ -66,8 +72,13 @@ local function open_link()
   local note_path = vim.fs.normalize(source_dir .. "/" .. target)
   local parent_dir = vim.fs.dirname(note_path)
 
-  if vim.fn.isdirectory(parent_dir) == 0 then
+  if not is_image and vim.fn.isdirectory(parent_dir) == 0 then
     vim.fn.mkdir(parent_dir, "p")
+  end
+
+  if is_image and vim.fn.filereadable(note_path) == 0 then
+    vim.notify("Image not found: " .. note_path, vim.log.levels.WARN)
+    return
   end
 
   -- Keep the source note clean while it is hidden behind the linked note.
