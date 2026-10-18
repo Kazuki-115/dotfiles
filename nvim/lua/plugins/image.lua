@@ -100,6 +100,26 @@ local function remove_stale_image_padding(image)
   end
 end
 
+local function repaint_without_hidden_image(image)
+  local state = image and image.global_state
+  if not state or not state.backend then
+    return
+  end
+
+  -- A shallow Image:clear() removes the image from Sixel's desired frame but
+  -- does not schedule that empty frame for painting. Clear the terminal frame
+  -- without deleting any Image objects, then queue every other visible image
+  -- again. This removes leftover pixels while keeping the hidden image ready
+  -- to return when the cursor leaves its source line.
+  pcall(state.backend.clear)
+  for _, other in pairs(state.images or {}) do
+    if other ~= image and not other.notes_hidden_for_cursor then
+      pcall(other.render, other)
+    end
+  end
+  state.images[image.id] = image
+end
+
 local function configure_markdown_image_before_render(image, options)
   if not image or not options or options.namespace ~= "markdown" then
     return image
@@ -393,6 +413,7 @@ local function apply_markdown_image_sizes(buf, refresh_position, movement)
         -- A shallow clear keeps the image object registered, so leaving the
         -- source line can render it again without reparsing the document.
         image:clear(true)
+        repaint_without_hidden_image(image)
         needs_immediate_terminal_clear = true
       end
       image.notes_hidden_for_cursor = true
