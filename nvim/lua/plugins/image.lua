@@ -435,8 +435,12 @@ local function apply_markdown_image_sizes(buf, refresh_position, movement)
 
   if needs_immediate_terminal_clear then
     -- The Sixel backend normally batches this repaint for 50ms. Clear the
-    -- terminal frame now so Neovim does not draw the link text over a still
-    -- visible image and make it look like two separate images are vanishing.
+    -- terminal frame before Neovim draws the link text. Waiting for the
+    -- backend flush prevents the intermediate frame where the source text is
+    -- visible while remnants of the old image are still on screen.
+    pcall(vim.wait, 80, function()
+      return false
+    end, 5)
     pcall(vim.cmd, "redraw!")
   end
 end
